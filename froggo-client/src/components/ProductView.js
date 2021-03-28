@@ -9,9 +9,9 @@ class ProductView extends React.Component {
         };
     }
 
-    async fetchGithubApi(url) {
+    async fetchAndDecodeJson(url) {
         const response = await fetch(url);
-        return await response.json();
+        return response.json();
     }
 
     generateRandomBranches(length) {
@@ -26,12 +26,24 @@ class ProductView extends React.Component {
     async componentDidMount() {
         // const githubRepos = await this.fetchGithubApi('https://api.github.com/users/mikolajww/repos')
         this.setState({
-            branchList: this.generateRandomBranches(20)
+            branchList: await this.fetchAndDecodeJson('http://localhost:3001/branches')
         });
-        const profileData = await this.fetchGithubApi('https://api.github.com/users/mikolajww');
+        const profileData = await this.fetchAndDecodeJson('https://api.github.com/users/mikolajww');
         this.setState({
             imgUrl: profileData['avatar_url']
         });
+    }
+
+    async postBranch() {
+        const res = await fetch('http://localhost:3001/branches' ,{
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"branch_name": Math.random().toString(36).substring(7)})
+        });
+        return res.json();
     }
 
     render() {
@@ -42,6 +54,7 @@ class ProductView extends React.Component {
                 <li>ID | Branch name</li>
                 {this.state.branchList.map((b) => {return <li>{b.branch_id} | {b.branch_name}</li>})}
                 </ul>
+                <button onClick={this.postBranch}>Post</button>
             </>
         );
     }
