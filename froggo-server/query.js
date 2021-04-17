@@ -7,7 +7,7 @@ const pool = new Pool({
     host: process.env.DB_HOST.toString(),
     database: process.env.DB_NAME.toString(),
     password: process.env.DB_PASS.toString(),
-    port: process.env.DB_PORT.toString(),
+    port: process.env.DB_PORT.toString()
 });
 
 async function createTables () {

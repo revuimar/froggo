@@ -5,6 +5,7 @@ var logger = require('morgan');
 const db = require('./query');
 const dotenv = require('dotenv');
 const auth = require('./auth');
+var cors = require('cors')
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ var usersRouter = require('./routes/users');
 
 
 var app = express();
-
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
