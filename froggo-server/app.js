@@ -2,8 +2,11 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const db = require('./query')
+const db = require('./query');
+const dotenv = require('dotenv');
+const auth = require('./auth');
 
+dotenv.config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -27,8 +30,8 @@ function initdb(){
     });
 }
 
-app.get('/branches', db.getBranches)
-app.get('/branches/:id', db.getBranchById)
-app.post('/branches', db.createBranch)
+app.get('/branches',auth.authenticateToken, db.getBranches)
+app.get('/branches/:id',auth.authenticateToken, db.getBranchById)
+app.post('/branches',auth.authenticateToken, db.createBranch)
 
 module.exports = {app,initdb};

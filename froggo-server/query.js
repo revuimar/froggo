@@ -1,10 +1,13 @@
 const Pool = require('pg/lib').Pool;
+const dotenv = require('dotenv');
+dotenv.config();
+
 const pool = new Pool({
-    user: 'Revuimar',
-    host: 'localhost',
-    database: 'froggo',
-    password: '',
-    port: 5432,
+    user: process.env.DB_USER_NAME.toString(),
+    host: process.env.DB_HOST.toString(),
+    database: process.env.DB_NAME.toString(),
+    password: process.env.DB_PASS.toString(),
+    port: process.env.DB_PORT.toString(),
 });
 
 async function createTables () {
@@ -54,6 +57,7 @@ const getBranches = (request, response) => {
             if (error) {
                 throw error
             }
+            console.log(results.rows)
             response.status(200).json(results.rows)
     })
 }
