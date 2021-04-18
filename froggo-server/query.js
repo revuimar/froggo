@@ -1,12 +1,17 @@
 const Pool = require('pg/lib').Pool;
+<<<<<<< HEAD
 const fetch = require("node-fetch");
+=======
+const dotenv = require('dotenv');
+dotenv.config();
+>>>>>>> 7f202fdb42b1c1eefeb22d8b319524c85b4e36d9
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'froggo',
-    password: 'postgres',
-    port: 5432,
+    user: process.env.DB_USER_NAME.toString(),
+    host: process.env.DB_HOST.toString(),
+    database: process.env.DB_NAME.toString(),
+    password: process.env.DB_PASS.toString(),
+    port: process.env.DB_PORT.toString()
 });
 
 async function createTables () {
@@ -58,8 +63,13 @@ const getBranches = async (request, response) => {
             if (error) {
                 throw error
             }
+<<<<<<< HEAD
             console.log(results.rows.concat(json));
             response.status(200).json(results.rows.concat(json))
+=======
+            console.log(results.rows)
+            response.status(200).json(results.rows)
+>>>>>>> 7f202fdb42b1c1eefeb22d8b319524c85b4e36d9
     })
 }
 
