@@ -1,10 +1,6 @@
 const Pool = require('pg/lib').Pool;
-<<<<<<< HEAD
-const fetch = require("node-fetch");
-=======
 const dotenv = require('dotenv');
 dotenv.config();
->>>>>>> 7f202fdb42b1c1eefeb22d8b319524c85b4e36d9
 
 const pool = new Pool({
     user: process.env.DB_USER_NAME.toString(),
@@ -63,13 +59,8 @@ const getBranches = async (request, response) => {
             if (error) {
                 throw error
             }
-<<<<<<< HEAD
-            console.log(results.rows.concat(json));
-            response.status(200).json(results.rows.concat(json))
-=======
             console.log(results.rows)
             response.status(200).json(results.rows)
->>>>>>> 7f202fdb42b1c1eefeb22d8b319524c85b4e36d9
     })
 }
 
