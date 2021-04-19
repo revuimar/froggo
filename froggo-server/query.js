@@ -53,8 +53,6 @@ async function createTables () {
 
 
 const getBranches = async (request, response) => {
-    let r = await fetch("http://127.0.0.1:5000/api/test");
-    let json = await r.json();
     pool.query('SELECT * FROM public.branches ORDER BY branch_id ASC', (error, results) => {
             if (error) {
                 throw error
