@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import requests
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -11,6 +12,12 @@ class Users(db.Model):
 
     def __repr__(self):
         return f'<Name {id}>'
+
+@app.route('/api/test', methods=['GET'])
+def test():
+    #r = requests.get('https://api.github.com/users/mikolajww')
+    data = {"branch_id": 1, "branch_name": "Chrząszczyrzewoszyce"}
+    return jsonify(data)
 
 @app.route('/')
 def home():
@@ -29,6 +36,8 @@ def users():
             return 'A problem occured when adding the user.'
     users = Users.query.order_by(Users.id)
     return render_template('users.html', users=users)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

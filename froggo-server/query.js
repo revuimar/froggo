@@ -53,7 +53,7 @@ async function createTables () {
 
 
 
-const getBranches = (request, response) => {
+const getBranches = async (request, response) => {
     pool.query('SELECT * FROM public.branches ORDER BY branch_id ASC', (error, results) => {
             if (error) {
                 throw error
