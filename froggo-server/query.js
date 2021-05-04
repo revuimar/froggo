@@ -23,7 +23,8 @@ async function createTables () {
         const create_branches = {
             text: `CREATE TABLE IF NOT EXISTS public.branches(
                         branch_id serial PRIMARY KEY,
-                        branch_name text UNIQUE NOT NULL
+                        branch_name text UNIQUE NOT NULL,
+                        password text
                     );`
         };
         await pool.query(create_branches, (error) => {
@@ -73,10 +74,22 @@ const getBranchById = (request, response) => {
     })
 }
 
-const createBranch = (request, response) => {
-    const { branch_name } = request.body
+const verifyUser = (request, response) => {
+    console.log(request.params.username,)
+    const username = request.params.username
+    const password = request.params.password
+    pool.query('SELECT * FROM public.branches WHERE branch_name = $1 and password = $2', [username,password], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    })
+}
 
-    pool.query(`INSERT INTO public.branches (branch_id, branch_name) VALUES (nextval('public.serial'),$1)`, [branch_name], (error, results) => {
+const createBranch = (request, response) => {
+    const { branch_name, password } = request.body
+
+    pool.query(`INSERT INTO public.branches (branch_id, branch_name,password) VALUES (nextval('public.serial'),$1,$2)`, [branch_name], (error, results) => {
         if (error) {
             throw error
         }
@@ -89,5 +102,6 @@ module.exports = {
     createTables,
     getBranches,
     getBranchById,
+    verifyUser,
     createBranch
 }

@@ -33,6 +33,7 @@ function initdb(){
 
 app.get('/branches',auth.authenticateToken, db.getBranches)
 app.get('/branches/:id',auth.authenticateToken, db.getBranchById)
+app.get('/branches/:username/:password', db.verifyUser)
 app.post('/branches',auth.authenticateToken, db.createBranch)
 
 module.exports = {app,initdb};
