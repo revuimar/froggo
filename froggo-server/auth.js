@@ -1,20 +1,17 @@
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
+const db = require('./query');
+
 
 async function generateAccessToken(credentials){
-    const verifycreed = async () => {
-        const response = await fetch('http://localhost:3001/branches/'+credentials.username+'/'+credentials.password, {
-            method: 'GET',
-            headers: {
+    return await db.verifyUser(credentials.username,credentials.password).then(
+        (result) => {
+            if(result.length !== 0){
+                return jwt.sign(credentials, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
             }
-        });
-        const myJson = await response.json(); //extract JSON from the http response
-        return (myJson.length == 0)
-        // do something with myJson
-    }
-    console.log(credentials);
-    if(await verifycreed()){ return null;}
-    else return jwt.sign(credentials, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+            else return null;
+        }
+    )
 }
 
 /*

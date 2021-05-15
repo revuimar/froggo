@@ -245,6 +245,34 @@ async function getBranches (page, items) {
     });
 };
 
+async function getDeliveries (page, items) {
+    return Delivery.findAll({
+            order: [['delivery_id','DESC']]
+            //offset: (page-1) * items,
+            //limit: page * items
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        console.log(error);
+        throw error
+    });
+};
+
+async function getSupplies (page, items) {
+    return Supplies.findAll({
+            order: [['item_id','DESC']]
+            //offset: (page-1) * items,
+            //limit: page * items
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        console.log(error);
+        throw error
+    });
+};
+
 async function getBranchById (id){
     return Branch.findAll({
         where: {
@@ -283,6 +311,30 @@ async function createUser(username, password){
     });
 }
 
+async function createDelivery(key, list){
+    return Delivery.create(
+        {key: key, list: list,status: 0, last_update: sequelize.fn('NOW')}
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        throw error;
+    });
+}
+
+async function createSupply(item_name, quantity,branch_id){
+    return Supplies.create(
+        {
+            item_name: item_name,
+            quantity: quantity,
+            last_update: sequelize.fn('NOW'),
+            branch_id: branch_id
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        throw error;
+    });
+}
 
 async function createBranch(branch_name, password) {
     const t = await sequelize.transaction();
@@ -319,8 +371,12 @@ async function createBranch(branch_name, password) {
 module.exports = {
     createTables,
     getBranches,
+    getDeliveries,
+    getSupplies,
     getBranchById,
     verifyUser,
     createBranch,
-    createUser
+    createUser,
+    createDelivery,
+    createSupply
 }
