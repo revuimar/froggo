@@ -13,15 +13,14 @@ router.get('/connect',auth.authenticateToken, function(req, res, next) {
   res.status(200).json(`{message: 'Hello world'}`);
 });
 
-router.post('/api/gettoken', async (req, res) => {
+router.post('/api/login', async (req, res) => {
     const token = await auth.generateAccessToken(
         {
             username: req.body.username,
             password: req.body.password
         });
-    console.log(req.body.username)
-    if (!token) res.sendStatus(401)
-    else (res.json(token))
+    if (!token) res.sendStatus(401);
+    else res.json(token);
 });
 /*
 
