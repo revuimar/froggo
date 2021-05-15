@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 
-async function generateAccessToken(credentials, res){
+async function generateAccessToken(credentials){
     const verifycreed = async () => {
         const response = await fetch('http://localhost:3001/branches/'+credentials.username+'/'+credentials.password, {
             method: 'GET',
