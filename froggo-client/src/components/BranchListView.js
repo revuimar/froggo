@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {useAuth} from '../useAuth.js'
 
 import {navigate} from 'hookrouter';
+import BranchListElement from './BranchListElement.js';
 
 function BranchListView() {
     const auth = useAuth();
@@ -67,7 +68,7 @@ function BranchListView() {
             <div className="max-h-75vh overflow-y-scroll">
                 <ul className="bg-green-100">
                 <li>ID | Branch name</li>
-                {branchList.map((b) => {return <li key={b.branch_id}>{b.branch_id} | {b.branch_name}</li>})}
+                {branchList.map((b) => {return <BranchListElement branch_id={b.branch_id} branch_name={b.branch_name} />})}
                 </ul>
             </div>
             <p className='text-white'>Logged in as {auth.user["username"]}</p>
