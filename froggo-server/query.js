@@ -138,7 +138,7 @@ async function createTables () {
 
 async function getBranches (page, items) {
     return Branch.findAll({
-        order: [['branch_id','DESC']]
+        order: [['branch_id','ASC']]
         //offset: (page-1) * items,
         //limit: page * items
         }
@@ -152,7 +152,7 @@ async function getBranches (page, items) {
 
 async function getDeliveries (page, items) {
     return Delivery.findAll({
-            order: [['delivery_id','DESC']]
+            order: [['delivery_id','ASC']]
             //offset: (page-1) * items,
             //limit: page * items
         }
@@ -183,7 +183,7 @@ async function getMyDeliveries (branch_id) {
 
 async function getSupplies (page, items) {
     return Supplies.findAll({
-            order: [['item_id','DESC']]
+            order: [['item_id','ASC']]
             //offset: (page-1) * items,
             //limit: page * items
         }
@@ -288,12 +288,12 @@ async function createBranch(branch_name, password) {
             {username: branch_name, password: password},
             {transaction: t}
         ).then(
-            async (userResponce) => {
-                console.log(userResponce.username, ' User added');
+            async (userResponse) => {
+                console.log(userResponse.username, ' User added');
                 await Branch.create(
                     {
                         branch_name: branch_name,
-                        user_id: userResponce.user_id
+                        user_id: userResponse.user_id
                     },
                     {transaction: t})
             },
@@ -302,8 +302,8 @@ async function createBranch(branch_name, password) {
             }
         );
         return t.commit().then(
-            ()=>{return true},
-            (error)=>{throw error}
+                ()=>{return true},
+                (error)=>{throw error}
             );
     }
     catch (e) {
