@@ -120,6 +120,9 @@ Branch.belongsTo(User, { foreignKey: 'user_id' });
 Branch.hasOne(Supplies,{ foreignKey: 'branch_id' })
 Supplies.belongsTo(Branch, { foreignKey: 'branch_id' });
 
+Branch.hasOne(Delivery,{ foreignKey: 'branch_id' })
+Delivery.belongsTo(Branch, { foreignKey: 'branch_id' });
+
 async function createTables () {
     // create tables if not exists
     return await sequelize.sync().then(
@@ -132,104 +135,6 @@ async function createTables () {
         });
     // do we close connection?
 }
-
-/*
-const pool = new Pool({
-    user: process.env.DB_USER_NAME.toString(),
-    host: process.env.DB_HOST.toString(),
-    database: process.env.DB_NAME.toString(),
-    password: process.env.DB_PASS.toString(),
-    port: process.env.DB_PORT.toString()
-});
-
-async function createTables () {
-    try {
-        const create_sequencer = {
-            text: `CREATE SEQUENCE IF NOT EXISTS public.serial START 1;`
-        };
-        await pool.query(create_sequencer, (error) => {
-            if (error) {
-                throw error
-            }
-        });
-        const create_branches = {
-            text: `CREATE TABLE IF NOT EXISTS public.branches(
-                        branch_id serial PRIMARY KEY,
-                        branch_name text UNIQUE NOT NULL,
-                        password text
-                    );`
-        };
-        await pool.query(create_branches, (error) => {
-            if (error) {
-                throw error
-            }
-        });
-        const create_products = {
-            text: `CREATE TABLE IF NOT EXISTS public.products(
-                        product_id serial PRIMARY KEY,
-                        branch_id bigint,
-                        product_name text NOT NULL,
-                        product_stock integer NOT NULL,
-                        FOREIGN KEY (branch_id) REFERENCES public.branches (branch_id)
-                    );`
-        };
-        await pool.query(create_products, (error) => {
-            if (error) {
-                throw error
-            }
-        });
-    } catch (e) {
-        console.error(e.stack);
-    }
-}
-
-
-
-const getBranches = async (request, response) => {
-    pool.query('SELECT * FROM public.branches ORDER BY branch_id ASC', (error, results) => {
-            if (error) {
-                throw error
-            }
-            console.log(results.rows)
-            response.status(200).json(results.rows)
-    })
-}
-
-const getBranchById = (request, response) => {
-    const id = parseInt(request.params.id)
-
-    pool.query('SELECT * FROM public.branches WHERE branch_id = $1', [id], (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
-    })
-}
-
-const verifyUser = (request, response) => {
-    console.log(request.params.username,)
-    const username = request.params.username
-    const password = request.params.password
-    pool.query('SELECT * FROM public.branches WHERE branch_name = $1 and password = $2', [username,password], (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
-    })
-}
-
-const createBranch = (request, response) => {
-    const { branch_name, password } = request.body
-
-    pool.query(`INSERT INTO public.branches (branch_id, branch_name,password) VALUES (nextval('public.serial'),$1,$2)`, [branch_name], (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(201).send(`User added with ID: ${results}`)
-    })
-}
-
-*/
 
 async function getBranches (page, items) {
     return Branch.findAll({
@@ -251,6 +156,23 @@ async function getDeliveries (page, items) {
             //offset: (page-1) * items,
             //limit: page * items
         }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        console.log(error);
+        throw error
+    });
+};
+
+async function getMyDeliveries (branch_id) {
+    return Delivery.findAll({
+        order: [['delivery_id','DESC']],
+            //offset: (page-1) * items,
+            //limit: page * items
+        where: {
+            branch_id: {[Op.eq]: branch_id}
+        }
+    }
     ).then((result)=>{
         return result;
     },(error)=> {
@@ -321,6 +243,19 @@ async function createDelivery(key, list){
     });
 }
 
+async function syncDelivery(orders){
+    return Delivery.bulkCreate(orders,
+        {
+            fields:["key", "list", "status"] ,
+            updateOnDuplicate: ["key"]
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        throw error;
+    });
+}
+
 async function createSupply(item_name, quantity,branch_id){
     return Supplies.create(
         {
@@ -329,6 +264,16 @@ async function createSupply(item_name, quantity,branch_id){
             last_update: sequelize.fn('NOW'),
             branch_id: branch_id
         }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        throw error;
+    });
+}
+
+async function createSupplies(supplies){
+    return Supplies.bulkCreate(
+        supplies
     ).then((result)=>{
         return result;
     },(error)=> {
@@ -373,10 +318,13 @@ module.exports = {
     getBranches,
     getDeliveries,
     getSupplies,
+    syncDelivery,
+    getMyDeliveries,
     getBranchById,
     verifyUser,
     createBranch,
     createUser,
     createDelivery,
-    createSupply
+    createSupply,
+    createSupplies
 }

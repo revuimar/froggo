@@ -95,9 +95,30 @@ router.post('/api/supplies', async (request, response) => {
             response.sendStatus(401)
         });
 });
+router.post('/api/bulksupplies', async (request, response) => {
+    const { supplies } = request.body;
+    await db.createSupplies(supplies).then(
+        (result) => {
+            if(result){ response.status(200).json(result)}
+            else{ response.sendStatus(401) }
+        },()=>{
+            response.sendStatus(401)
+        });
+});
 router.post('/api/delivery', async (request, response) => {
     const { key,list } = request.body;
     await db.createDelivery(key,list).then(
+        (result) => {
+            if(result){ response.status(200).json(result)}
+            else{ response.sendStatus(401) }
+        },()=>{
+            response.sendStatus(401)
+        });
+});
+
+router.post('/api/sync/delivery', async (request, response) => {
+    const { orders } = request.body;
+    await db.createDelivery(orders).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(401) }
