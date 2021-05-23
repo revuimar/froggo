@@ -13,8 +13,8 @@ const https = require('https');
 const fs = require('fs');
 
 const httpsOptions = {
-  key: fs.readFileSync(__dirname + '\\certs\\selfsigned.key'),
-  cert: fs.readFileSync(__dirname + '\\certs\\selfsigned.crt'),
+  key: fs.readFileSync(__dirname + '/certs/selfsigned.key'),
+  cert: fs.readFileSync(__dirname + '/certs/selfsigned.crt'),
   ciphers: "DEFAULT:!SSLv2:!RC4:!EXPORT:!LOW:!MEDIUM:!SHA1"
 };
 
@@ -101,3 +101,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+module.exports = {server};
