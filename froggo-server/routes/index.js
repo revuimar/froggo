@@ -65,7 +65,7 @@ router.post('/api/branches', async (request, response) => {
     await db.createBranch(branch_name, password).then(
         (result) => {
             if(result){ 
-                response.status(200).json(result)
+                response.status(200)
             }
             else{ 
                 response.sendStatus(401) 
@@ -103,6 +103,7 @@ router.post('/api/supplies', async (request, response) => {
 });
 router.post('/api/bulksupplies', async (request, response) => {
     const { supplies } = request.body;
+    console.log('from requesst:  ',supplies)
     await db.createSupplies(supplies).then(
         (result) => {
             if(result){ response.status(200).json(result)}
@@ -128,7 +129,8 @@ router.post('/api/delivery', async (request, response) => {
 
 router.post('/api/sync/delivery', async (request, response) => {
     const { orders } = request.body;
-    await db.createDelivery(orders).then(
+    console.log('from api: ', orders)
+    await db.syncDelivery(orders).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(401) }
