@@ -15,7 +15,7 @@ function Login() {
             auth.signin(name, password).then(() => {navigate('/branches', true);})
         }
         catch(error) {
-            alert("Wrong creds");
+            alert("Wrong credentials");
         }
     }
 

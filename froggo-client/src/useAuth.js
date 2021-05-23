@@ -19,7 +19,7 @@ function useProvideAuth() {
     // Wrap any Firebase methods we want to use making sure ...
     // ... to save the user to state.
     const signin = async (login, password)  => {
-      const res = await fetch('http://localhost:3001/api/login' ,{
+      const res = await fetch('https://localhost:3001/api/login' ,{
         method: 'POST',
         mode: 'cors',
         headers: {
