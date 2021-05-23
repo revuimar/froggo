@@ -7,7 +7,8 @@ const sequelize = new Sequelize(
     process.env.DB_USER_NAME.toString(),
     process.env.DB_PASS.toString(), {
     dialect: 'postgres',
-    host: process.env.DB_HOST.toString()
+    host: process.env.DB_HOST.toString(),
+    logging: false
 });
 
 class User extends Model {}
@@ -312,6 +313,37 @@ async function createBranch(branch_name, password) {
         });
     }
 }
+async function deleteBranch(branch_name){
+    const t = await sequelize.transaction();
+    try {
+        await Branch.destroy({
+            where: {
+                branch_name: {[Op.eq]: branch_name}}
+                }
+            ,{transaction: t}
+            ).then(
+            async (userResponse) => {
+                await User.destroy({
+                    where: {
+                        username: {[Op.eq]: branch_name}}
+                    },
+                    {transaction: t})
+            },
+            (error) => {
+                throw error;
+            }
+        );
+        return t.commit().then(
+            ()=>{return true},
+            (error)=>{throw error}
+        );
+    }
+    catch (error) {
+        return t.rollback().then(()=>{
+            return false;
+        });
+    }
+}
 
 module.exports = {
     createTables,
@@ -323,6 +355,7 @@ module.exports = {
     getBranchById,
     verifyUser,
     createBranch,
+    deleteBranch,
     createUser,
     createDelivery,
     createSupply,
