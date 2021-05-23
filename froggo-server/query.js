@@ -38,7 +38,7 @@ User.init({
 });
 
 Branch.init({
-    branch_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -138,7 +138,7 @@ async function createTables () {
 
 async function getBranches (page, items) {
     return Branch.findAll({
-        order: [['branch_id','ASC']]
+        order: [['id','ASC']]
         //offset: (page-1) * items,
         //limit: page * items
         }
