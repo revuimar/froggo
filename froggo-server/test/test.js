@@ -5,7 +5,8 @@ const db = require('../query');
 
 chai.should();
 chai.use(chaiHttp);
-
+//HTTPS
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 //GENERATE MOCK DB DATA
 // load XML of data objects and then drop them
 

@@ -8,6 +8,16 @@ var {app,initdb} = require('../app');
 var debug = require('debug')('froggo:server');
 var http = require('http');
 
+
+const https = require('https');
+const fs = require('fs');
+
+const httpsOptions = {
+  key: fs.readFileSync(__dirname + '/certs/selfsigned.key'),
+  cert: fs.readFileSync(__dirname + '/certs/selfsigned.crt'),
+  ciphers: "DEFAULT:!SSLv2:!RC4:!EXPORT:!LOW:!MEDIUM:!SHA1"
+};
+
 /**
  * Get port from environment and store in Express.
  */
@@ -19,7 +29,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = https.createServer(httpsOptions, app);
 
 /**
  * Listen on provided port, on all network interfaces.
