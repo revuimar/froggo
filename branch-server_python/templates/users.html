@@ -1,0 +1,10 @@
+<h1>Users</h1>
+
+<form action="/users" METHOD="POST">
+    <input type="text" placeholder="Name" name="name">
+    <input type="submit" value="Add Name" class="btn">
+</form>
+<br/>
+{% for user in users %}
+    {{ user.id }} {{ user.name }} <br/>
+{% endfor %}
