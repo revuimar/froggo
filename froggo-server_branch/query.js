@@ -39,7 +39,7 @@ User.init({
 });
 
 Branch.init({
-    id:{
+    branch_id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -77,7 +77,11 @@ Delivery.init({
     status: {
         type: DataTypes.SMALLINT,
         allowNull: false
-    }
+    },
+    last_update: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
 
 }, {
     sequelize,
@@ -99,11 +103,11 @@ Supplies.init({
     quantity:{
         type: DataTypes.INTEGER,
         allowNull: false
-    }/*,
+    },
     last_update:{
         type: DataTypes.DATE,
-        allowNull: true
-    }*/
+        allowNull: false
+    }
 }, {
     // Other model options go here
     sequelize, // We need to pass the connection instance
@@ -114,10 +118,10 @@ Supplies.init({
 User.hasOne(Branch, { foreignKey: 'user_id' });
 Branch.belongsTo(User, { foreignKey: 'user_id' });
 
-Branch.hasMany(Supplies,{ foreignKey: 'branch_id' })
+Branch.hasOne(Supplies,{ foreignKey: 'branch_id' })
 Supplies.belongsTo(Branch, { foreignKey: 'branch_id' });
 
-Branch.hasMany(Delivery,{ foreignKey: 'branch_id' })
+Branch.hasOne(Delivery,{ foreignKey: 'branch_id' })
 Delivery.belongsTo(Branch, { foreignKey: 'branch_id' });
 
 async function createTables () {
@@ -135,7 +139,7 @@ async function createTables () {
 
 async function getBranches (page, items) {
     return Branch.findAll({
-        order: [['id','ASC']]
+        order: [['branch_id','ASC']]
         //offset: (page-1) * items,
         //limit: page * items
         }
@@ -232,7 +236,7 @@ async function createUser(username, password){
 
 async function createDelivery(key, list){
     return Delivery.create(
-        {key: key, list: list,status: 0}
+        {key: key, list: list,status: 0, last_update: sequelize.fn('NOW')}
     ).then((result)=>{
         return result;
     },(error)=> {
@@ -241,33 +245,14 @@ async function createDelivery(key, list){
 }
 
 async function syncDelivery(orders){
-    console.log('from db',orders);
     return Delivery.bulkCreate(orders,
         {
-            fields:["key", "list", "status"],
-            updateOnDuplicate: ["key"],
-            returning: true
+            fields:["key", "list", "status"] ,
+            updateOnDuplicate: ["key"]
         }
     ).then((result)=>{
         return result;
     },(error)=> {
-        console.log(error);
-        throw error;
-    });
-}
-
-async function deleteDeliveries(ids){
-    await Delivery.destroy({
-            where: {
-                delivery_id: {
-                    [Op.or]: ids
-                }
-            }
-        }
-    ).then((result)=>{
-        return result;
-    },(error)=> {
-        console.log(error)
         throw error;
     });
 }
@@ -289,27 +274,10 @@ async function createSupply(item_name, quantity,branch_id){
 
 async function createSupplies(supplies){
     return Supplies.bulkCreate(
-        supplies,{ returning: true }
+        supplies
     ).then((result)=>{
         return result;
     },(error)=> {
-        console.log(error)
-        throw error;
-    });
-}
-
-async function deleteSupplies(ids){
-    await Supplies.destroy({
-            where: {
-                item_id: {
-                    [Op.or]: ids
-                }
-            }
-        }
-    ).then((result)=>{
-        return result;
-    },(error)=> {
-        console.log(error)
         throw error;
     });
 }
@@ -378,13 +346,11 @@ async function deleteBranch(branch_name){
 }
 
 module.exports = {
-    sequelize,
     createTables,
     getBranches,
     getDeliveries,
     getSupplies,
     syncDelivery,
-    deleteDeliveries,
     getMyDeliveries,
     getBranchById,
     verifyUser,
@@ -393,6 +359,5 @@ module.exports = {
     createUser,
     createDelivery,
     createSupply,
-    createSupplies,
-    deleteSupplies
+    createSupplies
 }

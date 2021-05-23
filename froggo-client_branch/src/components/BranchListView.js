@@ -2,31 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {useAuth} from '../useAuth.js'
 
 import {navigate} from 'hookrouter';
+import BranchListElement from './BranchListElement.js';
 
 import { DataGrid } from '@material-ui/data-grid';
-import {Fab, Modal, TextField} from '@material-ui/core';
-import {Add} from '@material-ui/icons';
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'branch_name', headerName: 'Branch Name', width: 200 },
+    { field: 'branch_id', headerName: 'ID', width: 90 },
+    { field: 'branch_name', headerName: 'Branch Name', width: 150 },
   ];
-
+  
 
 function BranchListView() {
     const auth = useAuth();
     const [branchList, setBranchList] = useState([]);
-
-    const [open, setOpen] = useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    
-    const handleClose = () => {
-    setOpen(false);
-    };
-    
 
     useEffect(() => {
         async function f() {
@@ -42,7 +30,6 @@ function BranchListView() {
             }
             let data = await response.json();
             setBranchList(data);
-            console.log(data);
         }
         if(auth.user != null) {
             f();
@@ -74,7 +61,6 @@ function BranchListView() {
             return setBranchList([]);
         }
         let data = await response.json();
-        
         setBranchList(data);
     };
 
@@ -84,27 +70,22 @@ function BranchListView() {
     }
 
     return (
-        <div className="w-3/4 max-h-75vh h-75vh text-white">
-            <DataGrid rows={branchList} columns={columns} pageSize={5} autoHeight={true}/>
-            <div className="py-2"></div>
-            <Fab color="primary" aria-label="add" className='float-right' onClick={handleOpen}>
-                <Add />
-            </Fab>
-            <Modal open={open} onClose={handleClose} className="">
-                <div style={{ position: "absolute", top: "50%", left:"50%", transform: "translate(-50%, -50%)"}} className="w-1/3 h-1/3 bg-white rounded-lg">
-                    <div className="px-4 py-8 flex flex-col text-center">
-                        <div>
-                            Add a new branch account
-                        </div>
-                        <form noValidate autoComplete="off" className="flex flex-col">
-                            <TextField id="filled-basic" label="Branch Name" variant="filled" />
-                            <TextField id="filled-basic" label="Branch Name" variant="filled" type="password" />
-                        </form>
-                    </div>
-                </div>
-            
-            </Modal>
+        <div className="w-3/4">
+            <DataGrid rows={branchList} columns={columns} pageSize={5} checkboxSelection />
         </div>
+
+        /*
+            
+            <div className="max-h-75vh overflow-y-scroll">
+                <ul className="bg-green-100">
+                <BranchListElement  branch_id="ID" branch_name="Branch Name"/>
+                {branchList.map((b) => {return <BranchListElement branch_id={b.branch_id} branch_name={b.branch_name} />})}
+                </ul>
+            </div>
+            <p className='text-white'>Logged in as {auth.user["username"]}</p>
+           
+            <button className="bg-green-300 rounded p-2" onClick={postBranch}>Post</button>
+        </div> */
     );
 
 }

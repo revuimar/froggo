@@ -11,6 +11,9 @@ const cors = require('cors');
 dotenv.config();
 
 var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+
+
 
 
 var app = express();
@@ -23,7 +26,7 @@ app.use(cookieParser());
 app.use('/', indexRouter);
 //app.use('/users', usersRouter)
 
-function initdb() {
+function initdb(){
     console.log('app initialise')
     db.createTables().then((res)=>{
         console.log('database initialised');
