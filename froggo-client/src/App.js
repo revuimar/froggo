@@ -1,7 +1,7 @@
 import './App.css';
 import BranchListView from './components/BranchListView';
 import Login from "./components/Login";
-import {useRoutes} from 'hookrouter';
+import {useRoutes, A} from 'hookrouter';
 import {ProvideAuth} from './useAuth.js'
 
 const routes = {
@@ -19,7 +19,7 @@ function App() {
             Froggo Headquarters Admin Panel
           </header>
           <div className="flex flex-col justify-center items-center content-center">
-          <ProvideAuth>{routeResult}</ProvideAuth>
+            <ProvideAuth>{routeResult}</ProvideAuth>
           </div>
         </div>
       </div>
