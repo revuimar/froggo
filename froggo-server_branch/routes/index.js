@@ -19,24 +19,18 @@ router.post('/api/login', async (req, res) => {
         auth.authenticateToken
 
  */
-router.get('/api/branches/:page/:items', async (request, response) => {
-    const page = parseInt(request.params.page);
-    const items = parseInt(request.params.items);
 
-    await db.getBranches(page,items).then(
+router.get('/api/supplies'/*,auth.authenticateToken*/, async (request, response) => {
+    await db.getSupplies().then(
         (result) => {
-            console.log(`success ${result}`)
-            response.status(200).json(result)
-        },
-        () => {
-            response.sendStatus(401)
-        }
-    );
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
 });
 
-router.get('/api/branch/:id'/*,auth.authenticateToken*/, async (request, response) => {
-    const id = parseInt(request.params.id);
-    await db.getBranchById(id).then(
+router.get('/api/orders'/*,auth.authenticateToken*/, async (request, response) => {
+    await db.getOrders().then(
         (result) => {
             response.status(200).json(result);
         },()=>{
@@ -60,21 +54,6 @@ router.get('/api/checkuser/:username/:password', async (request, response) => {
         });
     }
 );
-router.post('/api/branches', async (request, response) => {
-    const { branch_name, password } = request.body;
-    await db.createBranch(branch_name, password).then(
-        (result) => {
-            if(result){ 
-                response.status(200).json(result)
-            }
-            else{ 
-                response.sendStatus(401) 
-            }
-        },()=>{
-            response.sendStatus(401)
-        });
-
-});
 
 router.post('/api/users', async (request, response) => {
     const { username, password } = request.body;
@@ -88,8 +67,8 @@ router.post('/api/users', async (request, response) => {
 });
 
 router.post('/api/supplies', async (request, response) => {
-    const { item_name,quantity,branch_id } = request.body;
-    await db.createSupply(item_name,quantity,branch_id).then(
+    const { item_name,quantity } = request.body;
+    await db.createSupply(item_name,quantity).then(
         (result) => {
             if(result){ 
                 response.status(200).json(result);
@@ -111,9 +90,9 @@ router.post('/api/bulksupplies', async (request, response) => {
             response.sendStatus(401)
         });
 });
-router.post('/api/delivery', async (request, response) => {
+router.post('/api/order', async (request, response) => {
     const { key,list } = request.body;
-    await db.createDelivery(key,list).then(
+    await db.createOrder(key,list).then(
         (result) => {
             if(result){ 
                 response.status(200).json(result);
@@ -126,9 +105,9 @@ router.post('/api/delivery', async (request, response) => {
         });
 });
 
-router.post('/api/sync/delivery', async (request, response) => {
+router.post('/api/sync/order', async (request, response) => {
     const { orders } = request.body;
-    await db.createDelivery(orders).then(
+    await db.createOrder(orders).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(401) }
