@@ -60,14 +60,16 @@ router.get('/api/checkuser/:username/:password', async (request, response) => {
         });
     }
 );
-router.post('/api/branches', async (request, response) => {
+router.post('/api/branches', (request, response) => {
     const { branch_name, password } = request.body;
-    await db.createBranch(branch_name, password).then(
+    db.createBranch(branch_name, password).then(
         (result) => {
+            console.log(result);
             if(result){ 
-                response.status(200)
+                response.status(200).json(result);
             }
-            else{ 
+            else{
+                console.log('somehow ', result)
                 response.sendStatus(401) 
             }
         },()=>{

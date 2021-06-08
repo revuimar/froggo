@@ -17,7 +17,7 @@ class Delivery extends Model {}
 class Supplies extends Model {}
 
 User.init({
-    user_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -60,7 +60,7 @@ Branch.init({
 });
 
 Delivery.init({
-    delivery_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -86,7 +86,7 @@ Delivery.init({
 
 Supplies.init({
     // Idea behind supplies is to have null FK if it's warehouse stock
-    item_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -122,7 +122,7 @@ Delivery.belongsTo(Branch, { foreignKey: 'branch_id' });
 
 async function createTables () {
     // create tables if not exists
-    return await sequelize.sync().then(
+    return await sequelize.sync({force: true}).then(
         (res)=>{
             return res;
         },
@@ -149,7 +149,7 @@ async function getBranches (page, items) {
 
 async function getDeliveries (page, items) {
     return Delivery.findAll({
-            order: [['delivery_id','ASC']]
+            order: [['id','ASC']]
             //offset: (page-1) * items,
             //limit: page * items
         }
@@ -163,11 +163,11 @@ async function getDeliveries (page, items) {
 
 async function getMyDeliveries (branch_id) {
     return Delivery.findAll({
-        order: [['delivery_id','DESC']],
+        order: [['id','DESC']],
             //offset: (page-1) * items,
             //limit: page * items
         where: {
-            branch_id: {[Op.eq]: branch_id}
+            id: {[Op.eq]: branch_id}
         }
     }
     ).then((result)=>{
@@ -180,7 +180,7 @@ async function getMyDeliveries (branch_id) {
 
 async function getSupplies (page, items) {
     return Supplies.findAll({
-            order: [['item_id','ASC']]
+            order: [['id','ASC']]
             //offset: (page-1) * items,
             //limit: page * items
         }
@@ -195,7 +195,7 @@ async function getSupplies (page, items) {
 async function getBranchById (id){
     return Branch.findAll({
         where: {
-            branch_id: {[Op.eq]: id}
+            id: {[Op.eq]: id}
         }
     }
     ).then((result)=>{
@@ -259,7 +259,7 @@ async function syncDelivery(orders){
 async function deleteDeliveries(ids){
     await Delivery.destroy({
             where: {
-                delivery_id: {
+                id: {
                     [Op.or]: ids
                 }
             }
@@ -301,7 +301,7 @@ async function createSupplies(supplies){
 async function deleteSupplies(ids){
     await Supplies.destroy({
             where: {
-                item_id: {
+                id: {
                     [Op.or]: ids
                 }
             }
@@ -315,36 +315,28 @@ async function deleteSupplies(ids){
 }
 
 async function createBranch(branch_name, password) {
-    const t = await sequelize.transaction();
+
     try {
-        const user = await User.create(
-            {username: branch_name, password: password},
-            {transaction: t}
-        ).then(
-            async (userResponse) => {
-                console.log(userResponse.username, ' User added');
-                await Branch.create(
-                    {
-                        branch_name: branch_name,
-                        user_id: userResponse.user_id
-                    },
-                    {transaction: t})
-            },
-            (error) => {
-                throw error;
-            }
-        );
-        return t.commit().then(
-                ()=>{return true},
-                (error)=>{throw error}
+        var branch = null
+        const t = await sequelize.transaction(async (t) => {
+            const user = await User.create(
+                {username: branch_name, password: password},
+                {transaction: t}
             );
-    }
-    catch (e) {
-        return t.rollback().then(()=>{
-            return false;
+            branch = await Branch.create(
+                {
+                    branch_name: branch_name,
+                    user_id: user.id
+                },
+                {transaction: t});
         });
+        console.log('branch: ',branch);
+        return branch;
+    } catch (error) {
+        return null;
     }
 }
+
 async function deleteBranch(branch_name){
     const t = await sequelize.transaction();
     try {
