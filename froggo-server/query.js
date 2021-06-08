@@ -122,7 +122,7 @@ Delivery.belongsTo(Branch, { foreignKey: 'branch_id' });
 
 async function createTables () {
     // create tables if not exists
-    return await sequelize.sync({force: true}).then(
+    return await sequelize.sync().then(
         (res)=>{
             return res;
         },
@@ -133,7 +133,7 @@ async function createTables () {
     // do we close connection?
 }
 
-async function getBranches (page, items) {
+async function getBranches(page, items) {
     return Branch.findAll({
         order: [['id','ASC']]
         //offset: (page-1) * items,
