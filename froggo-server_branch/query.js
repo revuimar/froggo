@@ -188,7 +188,7 @@ async function createSupply(item_name, quantity){
 
 async function createSupplies(supplies){
     return Supplies.bulkCreate(
-        supplies
+        supplies,{returning: true}
     ).then((result)=>{
         return result;
     },(error)=> {

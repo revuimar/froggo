@@ -81,11 +81,11 @@ router.post('/api/supplies', async (request, response) => {
         });
 });
 router.post('/api/bulksupplies', async (request, response) => {
-    const { supplies } = request.body;
+    const supplies = request.body;
     await db.createSupplies(supplies).then(
         (result) => {
             if(result){ response.status(200).json(result)}
-            else{ response.sendStatus(401) }
+            else{ response.sendStatus(400) }
         },()=>{
             response.sendStatus(401)
         });
