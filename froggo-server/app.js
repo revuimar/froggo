@@ -6,7 +6,9 @@ const db = require('./query');
 const dotenv = require('dotenv');
 const auth = require('./auth');
 const cors = require('cors');
-
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger/swagger.yaml');
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocument))
 app.use(cookieParser());
 
 app.use('/', indexRouter);
