@@ -4,13 +4,14 @@ const crypto = require('crypto');
 const db = require('../query');
 var router = express.Router();
 
+
 router.post('/api/login', async (req, res) => {
     const token = await auth.generateAccessToken(
         {
             username: req.body.username,
             password: req.body.password
         });
-    if (!token) res.sendStatus(401);
+    if (!token) res.status(401).json({error: 'no such user'});
     else res.json(token);
 });
 /*
@@ -55,9 +56,28 @@ router.get('/api/checkuser/:username/:password', async (request, response) => {
     }
 );
 
+router.get('/api/users'/*,auth.authenticateToken*/, async (request, response) => {
+    db.getUsers().then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
+router.get('/api/users/:username'/*,auth.authenticateToken*/, async (request, response) => {
+    const username = request.params.username.toString();
+    db.getUserByUserName(username).then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
 router.post('/api/users', async (request, response) => {
     const { username, password } = request.body;
-    await db.createUser(username, password).then(
+    db.createUser(username, password).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(401) }
@@ -66,9 +86,28 @@ router.post('/api/users', async (request, response) => {
         });
 });
 
+router.get('/api/supplies'/*,auth.authenticateToken*/, async (request, response) => {
+    db.getSupplies().then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
+router.get('/api/supplies/:item_name'/*,auth.authenticateToken*/, async (request, response) => {
+    const item_name = request.params.item_name.toString();
+    db.getSuppliesByItemName(item_name).then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
 router.post('/api/supplies', async (request, response) => {
     const { item_name,quantity } = request.body;
-    await db.createSupply(item_name,quantity).then(
+    db.createSupply(item_name,quantity).then(
         (result) => {
             if(result){ 
                 response.status(200).json(result);
@@ -82,7 +121,7 @@ router.post('/api/supplies', async (request, response) => {
 });
 router.post('/api/bulksupplies', async (request, response) => {
     const supplies = request.body;
-    await db.createSupplies(supplies).then(
+    db.createSupplies(supplies).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(400) }
@@ -90,9 +129,29 @@ router.post('/api/bulksupplies', async (request, response) => {
             response.sendStatus(401)
         });
 });
+
+router.get('/api/orders'/*,auth.authenticateToken*/, async (request, response) => {
+    db.getOrders().then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
+router.get('/api/order/:key'/*,auth.authenticateToken*/, async (request, response) => {
+    const key = request.params.key.toString();
+    db.getOrderByKey(key).then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
 router.post('/api/order', async (request, response) => {
     const { key,list } = request.body;
-    await db.createOrder(key,list).then(
+    db.createOrder(key,list).then(
         (result) => {
             if(result){ 
                 response.status(200).json(result);
@@ -105,9 +164,9 @@ router.post('/api/order', async (request, response) => {
         });
 });
 
-router.post('/api/sync/order', async (request, response) => {
+router.post('/api/bulkorder', async (request, response) => {
     const { orders } = request.body;
-    await db.createOrder(orders).then(
+    db.bulkCreateOrders(orders).then(
         (result) => {
             if(result){ response.status(200).json(result)}
             else{ response.sendStatus(401) }

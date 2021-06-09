@@ -26,10 +26,19 @@ app.use(cookieParser());
 app.use('/', indexRouter);
 //app.use('/users', usersRouter)
 
-function initdb(){
+async function initdb(){
     console.log('app initialise')
-    db.createTables().then((res)=>{
+    db.createTables().then(()=>{
         console.log('database initialised');
+    });
+    db.createMockUsers().then(()=>{
+        console.log('user mock data added');
+    });
+    db.createMockSupplies().then(()=>{
+        console.log('supplies mock data added');
+    });
+    db.createMockOrders().then(()=>{
+        console.log('orders mock data added');
     });
 }
 
