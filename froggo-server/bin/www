@@ -24,7 +24,6 @@ const httpsOptions = {
 
 var port = normalizePort(process.env.APP_PORT.toString());
 app.set('port', port);
-
 /**
  * Create HTTP server.
  */

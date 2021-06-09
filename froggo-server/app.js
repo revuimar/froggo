@@ -6,9 +6,33 @@ const db = require('./query');
 const dotenv = require('dotenv');
 const auth = require('./auth');
 const cors = require('cors');
+
 const swaggerUi = require('swagger-ui-express')
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger/swagger.yaml');
+const swaggerJsDoc = require('swagger-jsdoc');
+
+//const YAML = require('yamljs');
+//const swaggerDocument = YAML.load('./swagger/swagger.yaml');
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        components: {},
+        info: {
+            title: "Rest API",
+            description: "A simple rest API"
+        },
+        servers: [
+            {
+                url: 'https://localhost:3001',
+                description: 'Development server'
+            }
+        ]
+    },
+    apis: ["./routes/*.js"]
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+
 
 dotenv.config();
 
@@ -20,7 +44,16 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocument))
+/*
+app.use((req, res, next) => {
+    res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.append('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Content-Type' , 'application/json')
+    next();
+});
+*/
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocs))
 app.use(cookieParser());
 
 app.use('/', indexRouter);

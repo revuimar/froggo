@@ -122,7 +122,7 @@ Delivery.belongsTo(Branch, { foreignKey: 'branch_id' });
 
 async function createTables () {
     // create tables if not exists
-    return await sequelize.sync({force: true}).then(
+    return await sequelize.sync().then(
         (res)=>{
             return res;
         },
