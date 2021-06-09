@@ -147,7 +147,7 @@ async function getBranches(page, items) {
     });
 };
 
-async function getDeliveries (page, items) {
+async function getDeliveries(page, items) {
     return Delivery.findAll({
             order: [['id','ASC']]
             //offset: (page-1) * items,
@@ -178,7 +178,7 @@ async function getMyDeliveries (branch_id) {
     });
 };
 
-async function getSupplies (page, items) {
+async function getSupplies() {
     return Supplies.findAll({
             order: [['id','ASC']]
             //offset: (page-1) * items,

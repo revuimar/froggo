@@ -9,7 +9,9 @@ import {Add} from '@material-ui/icons';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'branch_name', headerName: 'Branch Name', width: 200 },
+    { field: 'branch_id', headerName: 'Branch ID', width: 200 },
+    { field: 'item_name', headerName: 'Item Name', width: 200 },
+    { field: 'quantity', headerName: 'Quantity', width: 200 },
   ];
 
 
@@ -38,7 +40,7 @@ function ProductListView() {
     }, []);
 
     let getAllProducts = async () => {
-        const response = await fetch('https://localhost:3001/api/supplies/1/1', {
+        const response = await fetch('https://localhost:3001/api/supplies', {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -53,21 +55,25 @@ function ProductListView() {
     }
 
     let addNewProduct = async () => {
-        let n = document.getElementById("branch_name").value;
-        let p = document.getElementById("branch_password").value;
-        await postProduct(n, p);
+        let n = document.getElementById("item_name").value;
+        let q = document.getElementById("quantity").value;
+        await postProduct(n, q);
         await getAllProducts();
     }
     
-    let postProduct = async (name, password) => {
-        const res = await fetch('https://localhost:3001/api/branches' , {
+    let postProduct = async (name, quantity) => {
+        const res = await fetch('https://localhost:3001/api/supplies' , {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${auth.user['token']}`|| ''
             },
-            body: JSON.stringify({"branch_name": name, "password": password})
+            body: JSON.stringify({
+                "item_name": name, 
+                "quantity": quantity,
+                "branch_id":1
+            })
         });
     };
 
@@ -83,8 +89,8 @@ function ProductListView() {
             <A className="px-4" href="/products">Show Products</A>
             <A className="px-4" href="/deliveries">Show Deliveries</A>
         </div>
-        {/* <div className="w-3/4 max-h-75vh h-75vh text-white">
-            <DataGrid rows={branchList} columns={columns} pageSize={10} rowsPerPageOptions={[10, 25, 50, 100]} pagination autoHeight={true}/>
+        <div className="w-3/4 max-h-75vh h-75vh text-white">
+            <DataGrid rows={productList} columns={columns} pageSize={10} rowsPerPageOptions={[10, 25, 50, 100]} pagination autoHeight={true}/>
             <div className="py-2"></div>
             <Fab color="primary" aria-label="add" className='float-right' onClick={handleOpen}>
                 <Add />
@@ -93,20 +99,20 @@ function ProductListView() {
                 <div style={{ position: "absolute", top: "50%", left:"50%", transform: "translate(-50%, -50%)"}} className="w-1/3 h-1/2 bg-white rounded-lg">
                     <div className="px-4 py-8 flex flex-col text-center">
                         <div>
-                            Add a new branch account
+                            Add a new product
                         </div>
                         <form noValidate autoComplete="off" className="flex flex-col">
-                            <TextField id="branch_name" label="Branch Name" variant="filled" />
-                            <TextField id="branch_password" label="Password" variant="filled" type="password" />
+                            <TextField id="item_name" label="Item Name" variant="filled" />
+                            <TextField id="quantity" label="Quantity" variant="filled" />
                             <Button variant="contained" color="primary" onClick={addNewProduct}>
-                            Add Branch
+                            Add Product
                             </Button>
                         </form>
                     </div>
                 </div>
             
             </Modal>
-        </div> */}
+        </div> 
         </>
     );
 
