@@ -28,7 +28,7 @@ var router = express.Router();
 
 /** @swagger
  *  /api/login:
- *       get:
+ *       post:
  *          summary: Returns JWT
  *          description: Takes user credentials verifies them and in case of correct data returns JWT
  *          requestBody:
@@ -63,7 +63,7 @@ var router = express.Router();
  *                          schema:
  *                              type: string
  */
-router.get('/api/login', async (req, res) => {
+router.post('/api/login', async (req, res) => {
     console.log(req.body)
     const token = await auth.generateAccessToken(
         {
