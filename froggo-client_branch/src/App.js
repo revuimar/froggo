@@ -13,9 +13,9 @@ function App() {
   const routeResult = useRoutes(routes);
   return (
     
-      <div className="bg-gray-700 antialiased font-sans min-h-screen">
+      <div className="antialiased font-sans min-h-screen">
         <div className="flex flex-col justify-center">
-          <header className="flex flex-row justify-center text-white pt-12 pb-4 text-2xl">
+          <header className="flex flex-row justify-center pt-12 pb-4 text-2xl">
             Froggo Branch Admin Panel
           </header>
           <div className="flex flex-col justify-center items-center content-center">

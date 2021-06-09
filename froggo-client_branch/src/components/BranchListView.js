@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {useAuth} from '../useAuth.js'
 
 import {navigate} from 'hookrouter';
-import BranchListElement from './BranchListElement.js';
 
 import { DataGrid } from '@material-ui/data-grid';
 

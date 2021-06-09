@@ -164,6 +164,22 @@ router.post('/api/supplies', async (request, response) => {
             response.sendStatus(401);
         });
 });
+
+router.get('/api/supplies', async (request, response) => {
+    await db.getSupplies().then(
+        (result) => {
+            if(result){ 
+                response.status(200).json(result);
+            }
+            else{ 
+                response.sendStatus(401);
+            }
+        },()=>{
+            response.sendStatus(401);
+        });
+});
+
+
 router.post('/api/bulksupplies', async (request, response) => {
     const supplies= request.body;
     console.log('from requesst:  ',supplies)
