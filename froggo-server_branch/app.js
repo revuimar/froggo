@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const db = require('./query');
+const db = require('./database/query');
 const dotenv = require('dotenv');
 const auth = require('./auth');
 const cors = require('cors');
@@ -11,8 +11,9 @@ const cors = require('cors');
 dotenv.config();
 
 var indexRouter = require('./routes/index');
+var ordersRouter = require('./routes/orders');
+var suppliesRouter = require('./routes/supplies');
 var usersRouter = require('./routes/users');
-
 
 
 
@@ -24,20 +25,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', indexRouter);
-//app.use('/users', usersRouter)
+app.use('/', ordersRouter);
+app.use('/', suppliesRouter);
+app.use('/', usersRouter);
 
 async function initdb(){
     console.log('app initialise')
     db.createTables().then(()=>{
         console.log('database initialised');
     });
-    db.createMockUsers().then(()=>{
+    db.Users.createMockUsers().then(()=>{
         console.log('user mock data added');
     });
-    db.createMockSupplies().then(()=>{
+    db.Supplies.createMockSupplies().then(()=>{
         console.log('supplies mock data added');
     });
-    db.createMockOrders().then(()=>{
+    db.Orders.createMockOrders().then(()=>{
         console.log('orders mock data added');
     });
 }

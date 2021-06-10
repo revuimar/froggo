@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
-const db = require('./query');
+const db = require('./database/query');
 
 
 async function generateAccessToken(credentials){
-    return await db.verifyUser(credentials.username,credentials.password).then(
+    return await db.Users.verifyUser(credentials.username,credentials.password).then(
         (result) => {
             if(result.length !== 0){
                 return jwt.sign(credentials, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
