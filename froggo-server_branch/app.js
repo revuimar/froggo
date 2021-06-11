@@ -31,7 +31,7 @@ app.use('/', usersRouter);
 
 async function initdb(){
     console.log('app initialise')
-    db.createTables().then(()=>{
+    await db.createTables().then(()=>{
         console.log('database initialised');
     });
     db.Users.createMockUsers().then(()=>{
@@ -40,9 +40,9 @@ async function initdb(){
     db.Supplies.createMockSupplies().then(()=>{
         console.log('supplies mock data added');
     });
-    db.Orders.createMockOrders().then(()=>{
+   /* db.Orders.createMockOrders().then(()=>{
         console.log('orders mock data added');
-    });
+    });*/
 }
 
 module.exports = {app,initdb};

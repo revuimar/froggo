@@ -8,7 +8,7 @@ const Supplies = require('./supplies');
 
 async function createTables () {
     // create tables if not exists
-    return await sequelize.sync().then(
+    return sequelize.sync().then(
         (res)=>{
             return res;
         },

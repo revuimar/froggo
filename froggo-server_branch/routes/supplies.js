@@ -46,6 +46,30 @@ router.post('/api/supplies', async (request, response) => {
             response.sendStatus(401);
         });
 });
+
+router.post('/api/supply/:id/update/'/*,auth.authenticateToken*/, async (request, response) => {
+    const id = parseInt(request.params.id);
+    const { quantity } = request.body;
+    db.Supplies.updateSupplyQuantity(id,quantity).then(
+        (result) => {
+            if(result){ response.status(200).json(result)}
+            else{ response.sendStatus(401) }
+        },()=>{
+            response.sendStatus(401)
+        });
+});
+
+router.get('/api/sync/supplies'/*,auth.authenticateToken*/, async (request, response) => {
+    db.Supplies.stageSuppliesSyncPayload().then(
+        (result) => {
+            response.status(200).json(result);
+        },()=>{
+            response.sendStatus(401);
+        });
+    // todo add other steps
+});
+
+
 router.post('/api/bulksupplies', async (request, response) => {
     const supplies = request.body;
     db.Supplies.createSupplies(supplies).then(

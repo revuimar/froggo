@@ -21,6 +21,10 @@ Order.init({
     status: {
         type: DataTypes.SMALLINT,
         allowNull: false
+    },
+    lastsync:{
+        type: DataTypes.DATE,
+        allowNull: true
     }
 
 }, {
@@ -55,7 +59,7 @@ async function createOrder(key, list){
     ).then((result)=>{
         return result;
     },(error)=> {
-        throw error;
+        return error;
     });
 }
 
@@ -67,10 +71,37 @@ async function bulkCreateOrders(){
     ).then((result)=>{
         return result;
     },(error)=> {
-        throw error;
+        return error;
     });
 }
 
+async function updateOrderStatusbyId(order_id,status){
+    return Order.update(
+        {status:status},{
+            where: {
+                order_id:order_id
+            }
+        }).then((result)=>{
+        return result;
+    },(error)=> {
+        return error;
+    });
+}
+
+async function stageOrderSyncPayload(){
+    return Order.findAll({
+        where: {
+            [Op.or]: [
+                { lastsync: {[Op.lt]: sequelize.col('updatedAt')} },
+                { lastsync: {[Op.is]: null} }
+            ]
+        }}
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        return error
+    });
+}
 
 async function createMockOrders(){
     const orders =
@@ -81,6 +112,7 @@ async function createMockOrders(){
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 33},
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 43}
                 ],
+                lastsync: null,
                 status: 0
             },
             {key: Math.random().toString(36).substring(7),
@@ -89,6 +121,7 @@ async function createMockOrders(){
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 42},
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 41}
                 ],
+                lastsync: null,
                 status: 0
             },
             {key: Math.random().toString(36).substring(7),
@@ -97,6 +130,7 @@ async function createMockOrders(){
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 34},
                     {"item_name": Math.random().toString(36).substring(7),"quantity": 23}
                 ],
+                lastsync: null,
                 status: 0
             }
         ];
@@ -118,5 +152,7 @@ module.exports = {
     getOrderByKey,
     createOrder,
     bulkCreateOrders,
+    updateOrderStatusbyId,
+    stageOrderSyncPayload,
     createMockOrders
 }
