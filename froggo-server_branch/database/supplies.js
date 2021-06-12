@@ -91,6 +91,51 @@ async function updateSupplyQuantity(item_id,quantity){
     });
 }
 
+async function updateRow(item_name, supply) {
+    return Supplies.update(
+        supply,
+        {
+            where: {item_name: item_name}
+        }
+    );
+}
+/*
+// i am using lodash for easy Object mapping
+function buildRowPromises(requestObject) {
+    const promises = _.map(requestObject, (value, key) =>
+        Promise.resolve().then(() => updateRow(key, value))
+    );
+    return promises;
+}
+
+//... expressjs code
+async function updateSupplyLastSync(supplies) {
+    for(let i in supplies){
+        supplies[i]['lastsync'] = sequelize.literal('NOW()');
+    }
+    update(req, res)
+    {
+        if (!req.body.updatedValue) return res.status(501).send({message: 'ERROR FIELD EMPTY'});
+        return Promise.all(buildRowPromises(req.body.updatedValue))
+            .then(setting => Setting.findAll().then(settingResult => res.status(200).send(settingResult)))
+            .catch(err => res.status(501).send(err));
+    }
+}*/
+
+async function updateSupplyLastSync(supplies){
+    try{
+        supplies.forEach(async supply => {
+            supply['lastsync'] = await sequelize.fn('NOW');
+            updateRow(supply.item_name,supply).catch((error)=> {
+                throw error;
+            });
+        });
+        return {"success": supplies}
+    }catch (e) {
+        return e;
+    }
+}
+
 async function stageSuppliesSyncPayload(){
     return Supplies.findAll({
         where: {
@@ -100,7 +145,14 @@ async function stageSuppliesSyncPayload(){
             ]
         }}
     ).then((result)=>{
-        return result;
+        let supplies = []
+        for(let i in result){
+            supplies.push({
+                "item_name": result[i].dataValues.item_name,
+                "quantity": result[i].dataValues.quantity,
+            })
+        }
+        return supplies;
     },(error)=> {
         return error
     });
@@ -138,6 +190,7 @@ module.exports = {
     createSupplies,
     createSupply,
     updateSupplyQuantity,
+    updateSupplyLastSync,
     stageSuppliesSyncPayload,
     createMockSupplies
 }

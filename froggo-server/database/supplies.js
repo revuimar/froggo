@@ -1,6 +1,6 @@
 const { Sequelize,DataTypes,Op,Model } = require('sequelize');
 const { sequelize }  = require('./connection');
-
+const { Branch } = require('./branch');
 
 class Supplies extends Model {}
 
@@ -61,13 +61,50 @@ async function createSupply(item_name, quantity,branch_id){
 
 async function createSupplies(supplies){
     return Supplies.bulkCreate(
-        supplies,{ returning: true }
+        supplies,{
+            updateOnDuplicate: ["item_name"],
+            returning: true
+        }
     ).then((result)=>{
         return result;
     },(error)=> {
         console.log(error)
         throw error;
     });
+}
+
+async function updateRow(item_name, supply, branch_name) {
+    Branch.findOne({
+        where: {branch_name: branch_name}
+    }).then((branch)=>{
+        return Supplies
+            .findOne({
+                where: {
+                    [Op.and]: [
+                        {item_name: item_name}
+                    ]
+                } })
+            .then(function(obj) {
+                // update
+                supply['branch_id'] = parseInt(branch.id);
+                if(obj)
+                    return obj.update(supply);
+                // insert
+                return Supplies.create(supply);
+            });
+    })
+
+}
+
+async function syncSupplies(supplies,branch){
+    console.log('from db: ',branch);
+    supplies.forEach(async supply => {
+        supply['lastsync'] = await sequelize.fn('NOW');
+        await updateRow(supply.item_name,supply,branch.branch_name).catch(()=>{
+            return null
+        })
+    });
+    return supplies;
 }
 
 async function deleteSupplies(ids){
@@ -116,6 +153,7 @@ module.exports = {
     getSupplies,
     createSupply,
     createSupplies,
+    syncSupplies,
     deleteSupplies,
     createMockSupplies
 }

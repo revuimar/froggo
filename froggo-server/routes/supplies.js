@@ -21,27 +21,26 @@ router.post('/api/supplies', async (request, response) => {
 router.get('/api/supplies', async (request, response) => {
     await db.Supplies.getSupplies().then(
         (result) => {
-            if(result){
-                response.status(200).json(result);
-            }
-            else{
-                response.sendStatus(401);
-            }
+            response.status(200).json(result);
         },()=>{
             response.sendStatus(401);
         });
 });
 
 
-router.post('/api/bulksupplies', async (request, response) => {
-    const supplies= request.body;
-    console.log('from requesst:  ',supplies)
-    await db.Supplies.createSupplies(supplies).then(
+router.post('/api/supplies/sync', async (request, response) => {
+    const {supplies,branch}= request.body;
+    console.log('from request:  ',supplies)
+    db.Supplies.syncSupplies(supplies,branch).then(
         (result) => {
-            if(result){ response.status(200).json(result)}
-            else{ response.sendStatus(401) }
+            if(result){
+                response.status(200).json(result);
+            }
+            else {
+                response.sendStatus(401);
+            }
         },()=>{
-            response.sendStatus(401)
+            response.sendStatus(401);
         });
 });
 

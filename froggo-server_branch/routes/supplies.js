@@ -2,6 +2,7 @@ var express = require('express');
 const auth = require('../auth');
 const crypto = require('crypto');
 const db = require('../database/query');
+const sync = require('../hq_api/sync');
 var router = express.Router();
 
 router.get('/api/supplies'/*,auth.authenticateToken*/, async (request, response) => {
@@ -59,14 +60,31 @@ router.post('/api/supply/:id/update/'/*,auth.authenticateToken*/, async (request
         });
 });
 
-router.get('/api/sync/supplies'/*,auth.authenticateToken*/, async (request, response) => {
+router.post('/api/sync/supplies'/*,auth.authenticateToken*/, async (request, response) => {
     db.Supplies.stageSuppliesSyncPayload().then(
-        (result) => {
-            response.status(200).json(result);
+        async (supplies) => {
+            if(supplies.length === 0){
+                return response.status(200).json({"success": "nothing to stage"})
+            }
+            const payload = {
+                "supplies": supplies,
+                "branch": {"branch_name": "Piotrkowska"}
+            };
+            console.log(payload);
+            sync.sendSync(payload).then(
+                (res) => {
+                    return db.Supplies.updateSupplyLastSync(payload.supplies).then(
+                        (res) => {
+                            response.status(200).json(res)
+                        });
+                },
+                () => {
+                    response.sendStatus(401);
+                }
+            );
         },()=>{
             response.sendStatus(401);
-        });
-    // todo add other steps
+        })
 });
 
 
