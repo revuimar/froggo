@@ -1,7 +1,7 @@
 var chai = require("chai");
 var chaiHttp = require("chai-http");
 var {server} = require("../bin/www");
-const db = require('../query')
+const db = require('../database/query')
 
 
 chai.should();
@@ -41,7 +41,7 @@ describe('Query API',()=>{
                     response.should.have.status(200);
                     //response.body.should.be.a('array');
                     //drop created branch
-                    db.deleteBranch(branch.branch_name).then(done,done);
+                    db.Branches.deleteBranch(branch.branch_name).then(done,done);
                 })
         })
     })
@@ -82,7 +82,7 @@ describe('Query API',()=>{
                     for (i in result){
                         ids.push(Number(result[i].item_id))
                     }
-                    db.deleteSupplies(ids).then(done,done);
+                    db.Supplies.deleteSupplies(ids).then(done,done);
 
                 })
         })
@@ -137,7 +137,7 @@ describe('Query API',()=>{
                     for (i in result){
                         ids.push(Number(result[i].delivery_id))
                     }
-                    db.deleteDeliveries(ids).then(done,done);
+                    db.Deliveries.deleteDeliveries(ids).then(done,done);
                 })
         })
     })

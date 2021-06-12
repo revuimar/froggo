@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const db = require('./query');
+const db = require('./database/query');
 const dotenv = require('dotenv');
 const auth = require('./auth');
 const cors = require('cors');
@@ -37,7 +37,10 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 dotenv.config();
 
 var indexRouter = require('./routes/index');
-
+var branchRouter = require('./routes/branch');
+var deliveryRouter = require('./routes/delivery');
+var suppliesRouter = require('./routes/supplies');
+var userRouter = require('./routes/user');
 
 var app = express();
 app.use(cors());
@@ -57,7 +60,11 @@ app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocs))
 app.use(cookieParser());
 
 app.use('/', indexRouter);
-//app.use('/users', usersRouter)
+app.use('/', branchRouter);
+app.use('/', deliveryRouter);
+app.use('/', suppliesRouter);
+app.use('/', userRouter);
+
 
 function initdb() {
     console.log('app initialise')
