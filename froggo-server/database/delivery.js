@@ -22,17 +22,19 @@ Delivery.init({
     status: {
         type: DataTypes.SMALLINT,
         allowNull: false
+    },
+    lastsync:{
+        type: DataTypes.DATE,
+        allowNull: true
     }
 }, {
     sequelize,
     modelName: 'delivery'
 });
 
-async function getDeliveries(page, items) {
+async function getDeliveries() {
     return Delivery.findAll({
             order: [['id','ASC']]
-            //offset: (page-1) * items,
-            //limit: page * items
         }
     ).then((result)=>{
         return result;
@@ -45,8 +47,6 @@ async function getDeliveries(page, items) {
 async function getMyDeliveries (branch_id) {
     return Delivery.findAll({
             order: [['id','DESC']],
-            //offset: (page-1) * items,
-            //limit: page * items
             where: {
                 id: {[Op.eq]: branch_id}
             }
@@ -59,9 +59,9 @@ async function getMyDeliveries (branch_id) {
     });
 };
 
-async function createDelivery(key, list){
+async function createDelivery(key, list, branch_id){
     return Delivery.create(
-        {key: key, list: list,status: 0}
+        {key: key, list: list,status: 0,branch_id: branch_id}
     ).then((result)=>{
         return result;
     },(error)=> {
@@ -70,10 +70,8 @@ async function createDelivery(key, list){
 }
 
 async function createBulkDelivery(orders){
-    console.log('from db',orders);
     return Delivery.bulkCreate(orders,
         {
-            fields:["key", "list", "status"],
             updateOnDuplicate: ["key"],
             returning: true
         }
@@ -101,11 +99,59 @@ async function deleteDeliveries(ids){
     });
 }
 
+
+async function createMockDeliveries(){
+    const deliveries =
+        [
+            {key: Math.random().toString(36).substring(7),
+                list: [
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 4},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 33},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 43}
+                ],
+                lastsync: null,
+                status: 0,
+                branch_id: 1
+            },
+            {key: Math.random().toString(36).substring(7),
+                list: [
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 42},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 42},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 41}
+                ],
+                lastsync: null,
+                status: 0,
+                branch_id: 1
+            },
+            {key: Math.random().toString(36).substring(7),
+                list: [
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 53},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 34},
+                    {"item_name": Math.random().toString(36).substring(7),"quantity": 23}
+                ],
+                lastsync: null,
+                status: 0,
+                branch_id: 1
+            }
+        ];
+    return Delivery.bulkCreate(
+        deliveries,{
+            updateOnDuplicate: ["key"],
+            returning: true
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        return  error;
+    });
+}
+
 module.exports = {
     Delivery,
     getDeliveries,
     getMyDeliveries,
     createDelivery,
     createBulkDelivery,
-    deleteDeliveries
+    deleteDeliveries,
+    createMockDeliveries
 }

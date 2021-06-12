@@ -15,10 +15,6 @@ Branch.init({
         type: DataTypes.TEXT,
         allowNull: false,
         unique: true
-    },
-    last_sync:{
-        type: DataTypes.DATE,
-        allowNull: true
     }
 }, {
     // Other model options go here
@@ -107,10 +103,54 @@ async function deleteBranch(branch_name){
     }
 }
 
+
+async function createMockBranches() {
+    const users = [
+        {"username": "Piotrkowska", "password": "test"},
+        {"username": "Struga", "password": "test"},
+        {"username": "Narutowicza", "password": "test"},
+        {"username": "Jaracza", "password": "test"},
+        {"username": "Politechniki", "password": "test"},
+        {"username": "Wólczańska", "password": "test"},
+        {"username": "Skorupki", "password": "test"},
+        {"username": "Kościuszki", "password": "test"},
+        {"username": "Zielona", "password": "test"}
+    ];
+    try {
+        var dbbranch = []
+        const t = await sequelize.transaction(async (t) => {
+            const dbusers = await User.bulkCreate(
+                users,
+                {
+                    updateOnDuplicate: ["username","password"],
+                    transaction: t,
+                    returning: true
+                }
+            );
+            let branches = [];
+            for(let i in dbusers){
+                 branches.push({"branch_name": dbusers[i].dataValues.username, "user_id": parseInt(dbusers[i].dataValues.id)});
+            }
+            dbbranch = await Branch.bulkCreate(
+                branches,
+                {
+                    updateOnDuplicate: ["branch_name","user_id"],
+                    transaction: t,
+                    returning: true
+                });
+        });
+        return dbbranch.length;
+    } catch (error) {
+        return null;
+    }
+}
+
+
 module.exports = {
     Branch,
     getBranches,
     getBranchById,
     createBranch,
-    deleteBranch
+    deleteBranch,
+    createMockBranches
 }

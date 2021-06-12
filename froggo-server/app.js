@@ -66,11 +66,15 @@ app.use('/', suppliesRouter);
 app.use('/', userRouter);
 
 
-function initdb() {
+async function initdb() {
     console.log('app initialise')
-    db.createTables().then((res)=>{
+    await db.createTables().then((res)=>{
         console.log('database initialised');
     });
+    await db.Branches.createMockBranches().then((res)=>{
+        console.log('mock branches created; No. records: ', res);
+    });
+
 }
 
 module.exports = {app,initdb};

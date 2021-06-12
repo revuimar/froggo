@@ -4,13 +4,12 @@ const db = require('../database/query');
 var router = express.Router();
 
 
-router.get('/api/branches/:page/:items', async (request, response) => {
-    const page = parseInt(request.params.page);
-    const items = parseInt(request.params.items);
+router.get('/api/branches', async (request, response) => {
+    //const page = parseInt(request.params.page);
+    //const items = parseInt(request.params.items);
 
-    await db.Branches.getBranches(page,items).then(
+    db.Branches.getBranches().then(
         (result) => {
-            console.log(`success ${result}`)
             response.status(200).json(result)
         },
         () => {
@@ -21,7 +20,7 @@ router.get('/api/branches/:page/:items', async (request, response) => {
 
 router.get('/api/branch/:id'/*,auth.authenticateToken*/, async (request, response) => {
     const id = parseInt(request.params.id);
-    await db.Branches.getBranchById(id).then(
+    db.Branches.getBranchById(id).then(
         (result) => {
             response.status(200).json(result);
         },()=>{
@@ -39,7 +38,6 @@ router.post('/api/branches', (request, response) => {
                 response.status(200).json(result);
             }
             else{
-                console.log('somehow ', result)
                 response.sendStatus(401)
             }
         },()=>{

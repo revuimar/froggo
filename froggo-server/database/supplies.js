@@ -19,11 +19,11 @@ Supplies.init({
     quantity:{
         type: DataTypes.INTEGER,
         allowNull: false
-    }/*,
-    last_update:{
+    },
+    lastsync:{
         type: DataTypes.DATE,
         allowNull: true
-    }*/
+    }
 }, {
     // Other model options go here
     sequelize, // We need to pass the connection instance
@@ -49,8 +49,8 @@ async function createSupply(item_name, quantity,branch_id){
         {
             item_name: item_name,
             quantity: quantity,
-            last_update: Sequelize.fn('NOW'),
-            branch_id: branch_id
+            branch_id: branch_id,
+            lastsync: null
         }
     ).then((result)=>{
         return result;
@@ -86,10 +86,36 @@ async function deleteSupplies(ids){
     });
 }
 
+async function createMockSupplies(){
+    const supplies = [
+        {"item_name": "Harnaś", "quantity": 50, "lastsync": null,"branch_id": 1},
+        {"item_name": "Sok", "quantity": 30, "lastsync": null,"branch_id": 1},
+        {"item_name": "Burak", "quantity": 320, "lastsync": null,"branch_id": 1},
+        {"item_name": "Cebula", "quantity": 780, "lastsync": null,"branch_id": 1},
+        {"item_name": "Kalarepa", "quantity": 322, "lastsync": null,"branch_id": 1},
+        {"item_name": "Papierosy", "quantity": 80, "lastsync": null,"branch_id": 1},
+        {"item_name": "Kalafiory", "quantity": 280, "lastsync": null,"branch_id": 1},
+        {"item_name": "Zapiekanki", "quantity": 30, "lastsync": null,"branch_id": 1},
+        {"item_name": "Grappa Ice", "quantity": 430, "lastsync": null,"branch_id": 1},
+        {"item_name": "Lewandowski album pamiątkowy", "quantity": 30, "lastsync": null,"branch_id": 1}
+    ]
+    return Supplies.bulkCreate(
+        supplies,{
+            updateOnDuplicate: ["item_name"],
+            returning: true
+        }
+    ).then((result)=>{
+        return result;
+    },(error)=> {
+        return  error;
+    });
+}
+
 module.exports = {
     Supplies,
     getSupplies,
     createSupply,
     createSupplies,
-    deleteSupplies
+    deleteSupplies,
+    createMockSupplies
 }
