@@ -107,6 +107,49 @@ async function syncSupplies(supplies,branch){
     return supplies;
 }
 
+
+async function stageSuppliesSyncPayload(branch_name){
+    console.log("from DB: ",branch_name);
+    return  Branch.findOne({
+        where: {branch_name: branch_name}
+    }).then(async (branch)=>{
+        console.log("found branch ",branch.dataValues.id);
+        return Supplies.findAll({
+            where: {
+                    branch_id: parseInt(branch.dataValues.id),
+                    [Op.or]: [
+                        { lastsync: {[Op.lt]: sequelize.col('updatedAt')} },
+                        { lastsync: {[Op.is]: null} }
+                    ]
+            },returning: true}
+        ).then((result)=>{
+            let supplies = []
+            for(let i in result){
+                supplies.push({
+                    "item_name": result[i].dataValues.item_name,
+                    "quantity": result[i].dataValues.quantity,
+                })
+            }
+            return supplies;
+        });
+    });
+
+}
+
+async function updateSupplyLastSync(supplies,branch_name){
+    try{
+        supplies.forEach(async supply => {
+            supply['lastsync'] = await sequelize.fn('NOW');
+            updateRow(supply.item_name,supply,branch_name).catch((error)=> {
+                throw error;
+            });
+        });
+        return {"success": supplies}
+    }catch (e) {
+        return e;
+    }
+}
+
 async function deleteSupplies(ids){
     await Supplies.destroy({
             where: {
@@ -154,6 +197,8 @@ module.exports = {
     createSupply,
     createSupplies,
     syncSupplies,
+    stageSuppliesSyncPayload,
+    updateSupplyLastSync,
     deleteSupplies,
     createMockSupplies
 }

@@ -2,6 +2,8 @@ var express = require('express');
 const auth = require('../auth');
 const db = require('../database/query');
 var router = express.Router();
+const { sendMessage,getRooms } = require('../sync/socket');
+
 
 
 /** @swagger
@@ -79,5 +81,22 @@ router.post('/api/login', async (req, res) => {
         auth.authenticateToken
 
  */
+
+router.get('/api/socket/rooms', async (req,res) => {
+    const rooms = getRooms()
+    res.status(200).json(rooms);
+});
+
+router.get('/api/socket', async (req,res) => {
+    const roomId = '12345';
+    const key = 'new-order';
+    const message = 'new order assigned';
+    sendMessage(roomId, key, message).then(()=>{
+        res.status(200).send()
+    },()=>{
+        res.sendStatus(401);
+        }
+    );
+});
 
 module.exports = router;

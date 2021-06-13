@@ -136,6 +136,19 @@ async function updateSupplyLastSync(supplies){
     }
 }
 
+async function updateSupplies(supplies){
+    try{
+        supplies.forEach(async supply => {
+            updateRow(supply.item_name,supply).catch((error)=> {
+                throw error;
+            });
+        });
+        return {"success": supplies}
+    }catch (e) {
+        return e;
+    }
+}
+
 async function stageSuppliesSyncPayload(){
     return Supplies.findAll({
         where: {
@@ -191,6 +204,7 @@ module.exports = {
     createSupply,
     updateSupplyQuantity,
     updateSupplyLastSync,
+    updateSupplies,
     stageSuppliesSyncPayload,
     createMockSupplies
 }

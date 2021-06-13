@@ -44,4 +44,35 @@ router.post('/api/supplies/sync', async (request, response) => {
         });
 });
 
+router.get('/api/supplies/sync', async (request, response) => {
+    const {supplies,branch}= request.body;
+    db.Supplies.stageSuppliesSyncPayload().then(
+        async (supplies) => {
+            if(supplies.length === 0){
+                return response.status(200).json({"success": "nothing to stage"})
+            }
+            response.status(200).json(supplies).then(
+                ()=>{
+
+                }
+            )
+            console.log(payload);
+            sync.sendSync(payload).then(
+                (res) => {
+                    return db.Supplies.updateSupplyLastSync(payload.supplies).then(
+                        (res) => {
+                            response.status(200).json(res)
+                        });
+                },
+                () => {
+                    response.sendStatus(401);
+                }
+            );
+        },()=>{
+            response.sendStatus(401);
+        })
+
+});
+
+
 module.exports = router;
