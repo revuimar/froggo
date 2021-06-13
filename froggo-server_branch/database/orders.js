@@ -4,7 +4,7 @@ const { sequelize } = require('./connection');
 class Order extends Model {}
 
 Order.init({
-    order_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -79,7 +79,7 @@ async function updateOrderStatusbyId(order_id,status){
     return Order.update(
         {status:status},{
             where: {
-                order_id:order_id
+                id:order_id
             }
         }).then((result)=>{
         return result;
