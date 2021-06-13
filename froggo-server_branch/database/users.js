@@ -4,7 +4,7 @@ const { sequelize } = require('./connection');
 class User extends Model {}
 
 User.init({
-    user_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres

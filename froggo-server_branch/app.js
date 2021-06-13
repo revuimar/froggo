@@ -7,7 +7,6 @@ const dotenv = require('dotenv');
 const auth = require('./auth');
 const cors = require('cors');
 
-
 dotenv.config();
 
 var indexRouter = require('./routes/index');

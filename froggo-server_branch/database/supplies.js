@@ -6,7 +6,7 @@ class Supplies extends Model {}
 
 Supplies.init({
     // Idea behind supplies is to have null FK if it's warehouse stock
-    item_id:{
+    id:{
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement:true //SERIALiser for postgres
@@ -32,7 +32,7 @@ Supplies.init({
 
 async function getSupplies () {
     return Supplies.findAll({
-            order: [['item_id','ASC']]
+            order: [['id','ASC']]
             //offset: (page-1) * items,
             //limit: page * items
         }
@@ -83,7 +83,7 @@ async function createSupply(item_name, quantity){
 async function updateSupplyQuantity(item_id,quantity){
     return Supplies.update(
         {quantity:quantity},{
-            where: {item_id: item_id}
+            where: {id: item_id}
         }).then((result)=>{
         return result;
     },(error)=> {
