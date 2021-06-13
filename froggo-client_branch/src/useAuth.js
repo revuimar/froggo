@@ -16,9 +16,8 @@ export function useAuth() {
 function useProvideAuth() {
     const [user, setUser] = useState(null);
   
-    // Wrap any Firebase methods we want to use making sure ...
-    // ... to save the user to state.
     const signin = async (login, password)  => {
+      try {
       const res = await fetch('https://localhost:3001/api/login' ,{
         method: 'POST',
         mode: 'cors',
@@ -35,6 +34,11 @@ function useProvideAuth() {
         const user = {"username" : login, "token": token}
         setUser(user);
         return user;
+      }
+      catch(error) {
+        console.log(error);
+        return null;
+      }
     };
   
     const signup = (email, password) => {

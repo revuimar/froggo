@@ -17,22 +17,28 @@ function useProvideAuth() {
     const [user, setUser] = useState(null);
   
     const signin = async (login, password)  => {
-      const res = await fetch('https://localhost:3001/api/login' ,{
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            "username": login,
-            "password": password
-          })
-        });
-        const token = await res.json();
-        //sessionStorage.setItem('JWT_Token', data);
-        const user = {"username" : login, "token": token}
-        setUser(user);
-        return user;
+      try {
+        const res = await fetch('https://localhost:3001/api/login' ,{
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              "username": login,
+              "password": password
+            })
+          });
+          const token = await res.json();
+          //sessionStorage.setItem('JWT_Token', data);
+          const user = {"username" : login, "token": token}
+          setUser(user);
+          return user;
+        }
+        catch(error) {
+          console.log(error);
+          return null;
+        }
     };
   
     const signup = (email, password) => {

@@ -12,7 +12,7 @@ function Login() {
         const name = form.elements['username'].value;
         const password = form.elements['password'].value;
         try {
-            auth.signin(name, password).then(() => {navigate('/branches', true);})
+            auth.signin(name, password).then(() => {navigate('/products', true);})
         }
         catch(error) {
             alert("Wrong credentials");

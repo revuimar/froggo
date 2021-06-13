@@ -16,13 +16,17 @@ var suppliesRouter = require('./routes/supplies');
 var usersRouter = require('./routes/users');
 
 
-
 var app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'https://localhost:3051',
+    optionsSuccessStatus: 200,
+    exposedHeaders: ['Authentication'],
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 
 app.use('/', indexRouter);
 app.use('/', ordersRouter);

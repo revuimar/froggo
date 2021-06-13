@@ -1,12 +1,12 @@
 import './App.css';
-import BranchListView from './components/BranchListView';
+import ProductListView from './components/ProductListView';
 import Login from "./components/Login";
 import {useRoutes} from 'hookrouter';
 import {ProvideAuth} from './useAuth.js'
 
 const routes = {
   "/": () => <Login />,
-  "/branches": () => <BranchListView />,
+  "/products": () => <ProductListView />,
 };
 
 function App() {
