@@ -38,7 +38,6 @@ function BranchListView() {
     }, []);
 
     let getBranches = async () => {
-        console.log(auth.user['token']);
         const response = await fetch('https://localhost:3001/api/branches', {
             method: 'GET',
             mode: 'cors',

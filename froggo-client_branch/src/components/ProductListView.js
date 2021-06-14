@@ -9,9 +9,9 @@ import {Add} from '@material-ui/icons';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'branch_id', headerName: 'Branch ID', width: 200 },
+    //{ field: 'branch_id', headerName: 'Branch ID', width: 200 },
     { field: 'item_name', headerName: 'Item Name', width: 200 },
-    { field: 'quantity', headerName: 'Quantity', width: 200 },
+    { field: 'quantity', headerName: 'Quantity', width: 200, editable: true },
   ];
 
 
@@ -28,17 +28,8 @@ function ProductListView() {
     const handleClose = () => {
         setOpen(false);
     };
+
     
-
-    useEffect(() => {
-        if(auth.user != null) {
-            getAllProducts();
-        }
-        return () => {
-            //cleanup
-        }
-    }, []);
-
     let getAllProducts = async () => {
         const response = await fetch('https://localhost:3050/api/supplies', {
             method: 'GET',
@@ -78,11 +69,72 @@ function ProductListView() {
         });
     };
 
+    const handleEditCellChangeCommitted = React.useCallback(
+        ({ id, field, props }) => {
+          console.log(id, field, props);
+          if (field === 'quantity') {
+            productList.forEach(product => {
+                if(product.id === id) {
+                    /// api/supply/:id/update/
+                    product[field] = props.value;
+                    const res = fetch(`https://localhost:3050/api/supply/${id}/update/` , {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${auth.user['token']}`|| ''
+                        },
+                        body: JSON.stringify({
+                            "quantity": props.value,
+                        })
+                    });
+                }
+            })
+            setProductList(productList);
+            
+          }
+        },
+        [productList, auth],
+      );
+    
+    const handleSync = async () => {
+        const response = await fetch('https://localhost:3050/api/sync/supplies', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${auth.user['token']}`|| ''
+            },
+            body: {
+                "branch_name": auth.user['username']
+            }
+        });
+        if(!response.ok) {
+            alert("Sync Failed!");
+
+        }
+        else {
+            const j = await response.json();
+            console.log(j);
+            alert(j.success);
+        }
+    }
+
+    useEffect(() => {
+        if(auth.user != null) {
+            getAllProducts();
+        }
+        return () => {
+            //cleanup
+        }
+    }, []);
+
+
     if(auth.user == null) {
         navigate("/", true);
         return null;
     }
 
+    /// api/sync/supplies
     return (
         <>
         <div className="flex flex-row justify-center pt-2 pb-2">
@@ -90,10 +142,14 @@ function ProductListView() {
             <A className="px-4" href="/deliveries">Show Deliveries</A>
         </div>
         <div className="w-3/4 max-h-75vh h-75vh text-white">
-            <DataGrid rows={productList} columns={columns} pageSize={10} rowsPerPageOptions={[10, 25, 50, 100]} pagination autoHeight={true}/>
+            <DataGrid rows={productList} columns={columns} pageSize={10} rowsPerPageOptions={[10, 25, 50, 100]} 
+                autoHeight={true} onEditCellChangeCommitted={handleEditCellChangeCommitted}/>
             <div className="py-2"></div>
             <Fab color="primary" aria-label="add" className='float-right' onClick={handleOpen}>
                 <Add />
+            </Fab>
+            <Fab color="primary" aria-label="add" className='float-left' onClick={handleSync}>
+                Sync
             </Fab>
             <Modal open={open} onClose={handleClose} className="">
                 <div style={{ position: "absolute", top: "50%", left:"50%", transform: "translate(-50%, -50%)"}} className="w-1/3 h-1/2 bg-white rounded-lg">

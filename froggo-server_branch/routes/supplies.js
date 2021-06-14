@@ -62,6 +62,7 @@ router.post('/api/supply/:id/update/'/*,auth.authenticateToken*/, async (request
 });
 
 router.post('/api/sync/supplies'/*,auth.authenticateToken*/, async (request, response) => {
+    const { branch_name } = request.body;
     db.Supplies.stageSuppliesSyncPayload().then(
          (supplies) => {
             if(supplies.length === 0){
@@ -92,7 +93,8 @@ router.post('/api/sync/supplies'/*,auth.authenticateToken*/, async (request, res
 });
 
 router.post('/api/requestsync/supplies'/*,auth.authenticateToken*/, (request, response)=>{
-    const branch = {"branch_name": "Piotrkowska"};
+    const { branch_name } = request.body;
+    const branch = {"branch_name": branch_name};
     const socket = socketConnection();
     /*if(socket.disconnected){
         return response.sendStatus(401);

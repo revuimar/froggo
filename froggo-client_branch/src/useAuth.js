@@ -29,6 +29,9 @@ function useProvideAuth() {
             "password": password
           })
         });
+        if(!res.ok) {
+          return null;
+        }
         const token = await res.json();
         //sessionStorage.setItem('JWT_Token', data);
         const user = {"username" : login, "token": token}
