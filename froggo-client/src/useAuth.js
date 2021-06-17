@@ -18,7 +18,7 @@ function useProvideAuth() {
   
     const signin = async (login, password)  => {
       try {
-        const res = await fetch('https://localhost:3001/api/login' ,{
+        const res = await fetch('http://localhost:3001/api/login' ,{
           method: 'POST',
           mode: 'cors',
           headers: {
@@ -44,25 +44,6 @@ function useProvideAuth() {
         }
     };
   
-    const signup = (email, password) => {
-      // return firebase
-      //   .auth()
-      //   .createUserWithEmailAndPassword(email, password)
-      //   .then((response) => {
-      //     setUser(response.user);
-      //     return response.user;
-      //   });
-    };
-  
-    const signout = () => {
-      // return firebase
-      //   .auth()
-      //   .signOut()
-      //   .then(() => {
-      //     setUser(false);
-      //   });
-    };
-  
     useEffect(() => {
       const unsubscribe = () => {};
       // firebase.auth().onAuthStateChanged((user) => {
@@ -80,8 +61,6 @@ function useProvideAuth() {
     // Return the user object and auth methods
     return {
       user,
-      signin,
-      signup,
-      signout
+      signin
     };
 }

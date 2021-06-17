@@ -9,7 +9,6 @@ import {Add} from '@material-ui/icons';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    //{ field: 'branch_id', headerName: 'Branch ID', width: 200 },
     { field: 'item_name', headerName: 'Item Name', width: 200 },
     { field: 'quantity', headerName: 'Quantity', width: 200, editable: true },
   ];
@@ -31,7 +30,7 @@ function ProductListView() {
 
     
     let getAllProducts = async () => {
-        const response = await fetch('https://localhost:3050/api/supplies', {
+        const response = await fetch('http://localhost:3050/api/supplies', {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -54,7 +53,7 @@ function ProductListView() {
     }
     
     let postProduct = async (name, quantity) => {
-        const res = await fetch('https://localhost:3050/api/supplies' , {
+        const res = await fetch('http://localhost:3050/api/supplies' , {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -77,7 +76,7 @@ function ProductListView() {
                 if(product.id === id) {
                     /// api/supply/:id/update/
                     product[field] = props.value;
-                    const res = fetch(`https://localhost:3050/api/supply/${id}/update/` , {
+                    const res = fetch(`http://localhost:3050/api/supply/${id}/update/` , {
                         method: 'POST',
                         mode: 'cors',
                         headers: {
@@ -98,7 +97,7 @@ function ProductListView() {
       );
     
     const handleSync = async () => {
-        const response = await fetch('https://localhost:3050/api/sync/supplies', {
+        const response = await fetch('http://localhost:3050/api/sync/supplies', {
             method: 'POST',
             mode: 'cors',
             headers: {

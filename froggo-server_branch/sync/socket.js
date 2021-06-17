@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
 function socketConnection(){
-    const socket = io.connect("https://localhost:3001/", {
+    const socket = io.connect("http://localhost:3001/", {
         reconnection: true,
         secure: true,
         rejectUnauthorized: false

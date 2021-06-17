@@ -18,7 +18,7 @@ function useProvideAuth() {
   
     const signin = async (login, password)  => {
       try {
-      const res = await fetch('https://localhost:3001/api/login' ,{
+      const res = await fetch('http://localhost:3001/api/login' ,{
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -43,43 +43,10 @@ function useProvideAuth() {
         return null;
       }
     };
-  
-    const signup = (email, password) => {
-      // return firebase
-      //   .auth()
-      //   .createUserWithEmailAndPassword(email, password)
-      //   .then((response) => {
-      //     setUser(response.user);
-      //     return response.user;
-      //   });
-    };
-  
-    const signout = () => {
-      // return firebase
-      //   .auth()
-      //   .signOut()
-      //   .then(() => {
-      //     setUser(false);
-      //   });
-    };
-    
-  
 
-  
-    // Subscribe to user on mount
-    // Because this sets state in the callback it will cause any ...
-    // ... component that utilizes this hook to re-render with the ...
-    // ... latest auth object.
     useEffect(() => {
       const unsubscribe = () => {};
-      // firebase.auth().onAuthStateChanged((user) => {
-      //   if (user) {
-      //     setUser(user);
-      //   } else {
-      //     setUser(false);
-      //   }
-      // });
-  
+
       // Cleanup subscription on unmount
       return () => unsubscribe();
     }, []);
@@ -88,7 +55,5 @@ function useProvideAuth() {
     return {
       user,
       signin,
-      signup,
-      signout
     };
 }

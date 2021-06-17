@@ -19,7 +19,7 @@
     "web-vitals": "^1.1.1"
   },
   "scripts": {
-    "start": "set HTTPS=true&&set PORT=3051&&craco start",
+    "start": "set PORT=3051&&craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

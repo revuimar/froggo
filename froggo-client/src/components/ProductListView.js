@@ -40,7 +40,7 @@ function ProductListView() {
     }, []);
 
     let getAllProducts = async () => {
-        const response = await fetch('https://localhost:3001/api/supplies', {
+        const response = await fetch('http://localhost:3001/api/supplies', {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -62,7 +62,7 @@ function ProductListView() {
     }
     
     let postProduct = async (name, quantity) => {
-        const res = await fetch('https://localhost:3001/api/supplies' , {
+        const res = await fetch('http://localhost:3001/api/supplies' , {
             method: 'POST',
             mode: 'cors',
             headers: {

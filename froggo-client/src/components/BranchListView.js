@@ -38,7 +38,7 @@ function BranchListView() {
     }, []);
 
     let getBranches = async () => {
-        const response = await fetch('https://localhost:3001/api/branches', {
+        const response = await fetch('http://localhost:3001/api/branches', {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -60,7 +60,7 @@ function BranchListView() {
     }
     
     let postBranch = async (name, password) => {
-        const res = await fetch('https://localhost:3001/api/branches' , {
+        const res = await fetch('http://localhost:3001/api/branches' , {
             method: 'POST',
             mode: 'cors',
             headers: {

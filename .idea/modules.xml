@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/IAP.iml" filepath="$PROJECT_DIR$/.idea/IAP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/froggo-client/froggo-client.iml" filepath="$PROJECT_DIR$/froggo-client/froggo-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/froggo-client_branch/froggo-client_branch.iml" filepath="$PROJECT_DIR$/froggo-client_branch/froggo-client_branch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/froggo-server/froggo-server.iml" filepath="$PROJECT_DIR$/froggo-server/froggo-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/froggo-server_branch/froggo-server_branch.iml" filepath="$PROJECT_DIR$/froggo-server_branch/froggo-server_branch.iml" />
     </modules>
   </component>
 </project>
